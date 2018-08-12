@@ -8,7 +8,11 @@ gen WorstPicks = 0
 
 do RenVar.do
 do Destring.do
-do WorstPicks.do
+
+gen PlayerName = first_name + " " + second_name
+
+merge 1:1 PlayerName teamvar_name using PlayerChar
+
 
 /*
 DEFINITIONS
@@ -41,7 +45,7 @@ replace fantasyteam = 1 if web_name == "Richarlison"
 replace fantasyteam = 1 if web_name == "Firmino"
 
 *CHECK THE IMPORTANCE OF VARIABLES CALIBRATED ON THE DREAM TEAM  
-reg in_dreamteam influence creativity threat ict_index value_form total_points
+reg in_dreamteam influence creativity threat ict_index value_form total_points ep_next
 
 
 
@@ -50,7 +54,7 @@ reg in_dreamteam influence creativity threat ict_index value_form total_points
 
 
 *1 = Goalkeeper, 2 = Defender, 3 = Midfielder, 4 = Forward
-pca influence creativity threat ict_index value_form total_points
+pca influence creativity threat ict_index value_form total_points selected_by_percent
 predict pca
 
 corr fantasyteam in_dreamteam pca
@@ -105,7 +109,9 @@ replace pcateam = 1 if pca==r(max)
 sum pca if element_type==4&pcateam != 1&$xconditions
 replace pcateam = 1 if pca==r(max)
 
-tabstat pca now_cost if pcateam==1,by(web_name) s(sum)
+tabstat pca now_cost total_points if pcateam==1,by(web_name) s(sum)
+tabstat pca now_cost total_points if fantasyteam==1,by(web_name) s(sum)
+
 tab web_name if pcateam==1
 tabstat pca now_cost if element_type==1,by(web_name) s(sum)
 
