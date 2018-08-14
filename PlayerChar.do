@@ -1,4 +1,4 @@
-cd "C:\Users\lujn\Desktop\FPL\Paris16"
+cd "$WorkingDirectory"
 import excel using FPL_api,describe
 import excel using FPL_api,sheet(PlayerChar) clear first
 replace Team = trim(Team)

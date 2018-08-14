@@ -1,5 +1,6 @@
 
-cd "C:\Users\lujn\Desktop\FPL\Paris16"
+cd "$WorkingDirectory"
+
 import excel using FPL_api,describe
 import excel using FPL_api,sheet(FPL_api) clear first
 
@@ -12,6 +13,12 @@ do Destring.do
 gen PlayerName = first_name + " " + second_name
 
 merge 1:1 PlayerName teamvar_name using PlayerChar
+
+**PLAYER INJURED & SUSPENDED
+gen ReturnBack = regexm(news,"Suspended until")
+replace ReturnBack = regexm(news,"Expected back")
+
+drop if news!=""&ReturnBack!=1
 
 
 /*
@@ -45,16 +52,21 @@ replace fantasyteam = 1 if web_name == "Richarlison"
 replace fantasyteam = 1 if web_name == "Firmino"
 
 *CHECK THE IMPORTANCE OF VARIABLES CALIBRATED ON THE DREAM TEAM  
-reg in_dreamteam influence creativity threat ict_index value_form total_points ep_next
+reg total_points influence creativity threat ict_index value_form
+predict points
 
-
-
+reg bonus influence creativity threat ict_index value_form
+predict bonuspoints
 
 *PREDICT TEAM FOR GAME WEEK
-
+*ict_index has high correlation with the other indices!
+*total_points almost perfect correlation with value_form
+*value_form very high correlation with influence
+pwcorr influence creativity threat selected_by_percent Height
 
 *1 = Goalkeeper, 2 = Defender, 3 = Midfielder, 4 = Forward
-pca influence creativity threat ict_index value_form total_points selected_by_percent
+*Height
+pca influence creativity threat selected_by_percent 
 predict pca
 
 corr fantasyteam in_dreamteam pca
@@ -109,8 +121,17 @@ replace pcateam = 1 if pca==r(max)
 sum pca if element_type==4&pcateam != 1&$xconditions
 replace pcateam = 1 if pca==r(max)
 
-tabstat pca now_cost total_points if pcateam==1,by(web_name) s(sum)
-tabstat pca now_cost total_points if fantasyteam==1,by(web_name) s(sum)
+*ICT index is very highly correlated with my PCA
+**ICT index is very highly correlated with a simple average index
+bysort id: egen avgindex = mean(influence+creativity+threat+selected_by_percent+(Height/100))
+pwcorr pca ict_index avgindex
+
+*****CHECK
+
+
+tabstat pca ict_index avgindex bonuspoints points now_cost total_points if pcateam==1,by(web_name) s(sum)
+tabstat pca ict_index avgindex bonuspoints points now_cost total_points if fantasyteam==1,by(web_name) s(sum)
+tabstat pca ict_index avgindex bonuspoints points now_cost total_points if in_dreamteam==1,by(web_name) s(sum)
 
 tab web_name if pcateam==1
 tabstat pca now_cost if element_type==1,by(web_name) s(sum)
