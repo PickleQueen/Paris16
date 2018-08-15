@@ -1,6 +1,7 @@
 
 use HistFPL1617,clear
 gen seasondummy = (Season==17)
+do PlayerNameCorrection.do
 
 areg totalpoints ictindex if Season==17,r a(GameWeek)
 areg totalpoints eaindex if Season==16,r a(GameWeek)
@@ -14,6 +15,8 @@ collapse (mean) AvgIctTeam=ictindex AvgPointsTeam=totalpoints AvgEATeam=eaindex 
 sepscatter AvgIctTeam GameWeek if Season==17,c(l) sep(team) graphregion(col(white))
 sepscatter AvgEATeam GameWeek if Season==16,c(l) sep(team) graphregion(col(white))
 sepscatter TotPointsTeam GameWeek if Season==16,c(l) sep(team) graphregion(col(white))
+
+reg totalpoints ictindex value_form selected_by_percent
 
 
 gen PlayerName = firstname + " " + surname

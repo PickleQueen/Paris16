@@ -12,13 +12,17 @@ do Destring.do
 
 gen PlayerName = first_name + " " + second_name
 
-merge 1:1 PlayerName teamvar_name using PlayerChar
+*merge 1:1 PlayerName teamvar_name using PlayerChar
 
 **PLAYER INJURED & SUSPENDED
 gen ReturnBack = regexm(news,"Suspended until")
 replace ReturnBack = regexm(news,"Expected back")
 
 drop if news!=""&ReturnBack!=1
+
+*Market values
+*corr MarketValueEUR now_cost 
+
 
 
 /*
@@ -55,8 +59,7 @@ replace fantasyteam = 1 if web_name == "Firmino"
 reg total_points influence creativity threat ict_index value_form
 predict points
 
-reg bonus influence creativity threat ict_index value_form
-predict bonuspoints
+reg total_points influence creativity threat value_form selected_by_percent MarketValueEUR
 
 *PREDICT TEAM FOR GAME WEEK
 *ict_index has high correlation with the other indices!
@@ -66,7 +69,7 @@ pwcorr influence creativity threat selected_by_percent Height
 
 *1 = Goalkeeper, 2 = Defender, 3 = Midfielder, 4 = Forward
 *Height
-pca influence creativity threat selected_by_percent 
+pca influence creativity threat selected_by_percent MarketValueEUR
 predict pca
 
 corr fantasyteam in_dreamteam pca
