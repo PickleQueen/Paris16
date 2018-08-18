@@ -2,7 +2,6 @@ use HistFPL1617,clear
 drop if inlist(Season,16,.)
 *gen i_Season=(Season==17)
 *keep if GameWeek==37
-gen PlayerName = firstname + " " + surname
 
 tabstat totalpoints if GameWeek==36,by(PlayerName) s(mean)
 tabstat totalpoints,by(PlayerName) s(mean)

@@ -17,6 +17,9 @@ gen PlayerName = first_name + " " + second_name
 **PLAYER INJURED & SUSPENDED
 gen ReturnBack = regexm(news,"Suspended until")
 replace ReturnBack = regexm(news,"Expected back")
+tab news
+tab web_name if ReturnBack==1
+tab web_name if news!=""&ReturnBack!=1
 
 drop if news!=""&ReturnBack!=1
 

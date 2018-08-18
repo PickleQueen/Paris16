@@ -1,36 +1,45 @@
-* xi: areg totalpoints selectedbypercent valueform i.teamid if GameWeek==2,r a(GameWeek)
-* _b[selectedbypercent ] = .1415292
-* _b[valueform] = 9.846862
 
-areg total_points selected_by_percent value_form,r a(team_code)
+/*
+GLK	Ederson Santana
+GLK	David De Gea
+DEF	Aaron Wan-Bissaka
+DEF	Andrew Robertson
+DEF Luke Shaw
+DEF	José Holebas
+DEF	Virgil van Dijk
+MID	Christian Eriksen
+MID	Richarlison
+MID	Mohamed Salah
+MID	Bernardo Silva
+MID	Roberto Pereyra
+FWD	Sergio Agüero
+FWD	Wilfried Zaha
+FWD	Roberto Firmino
+*/
+*DEF Cesar Azpilicueta
+*replace GW2Team =1 if id==113
+*MID	Riyad Mahrez
 
-gen GW2Scores = 0.1415292*selected_by_percent + 9.846862*value_form
-tabstat GW2Scores,by(PlayerName) s(mean)
+gen GW2Team = 0
+replace GW2Team =1 if id==282
+replace GW2Team =1 if id==145
+replace GW2Team =1 if id==247
+replace GW2Team =1 if id==378
+replace GW2Team =1 if id==364
+replace GW2Team =1 if id==246
+replace GW2Team =1 if id==393
+replace GW2Team =1 if id==253
+replace GW2Team =1 if id==391
+replace GW2Team =1 if id==280
+replace GW2Team =1 if id==257
+replace GW2Team =1 if id==151
+replace GW2Team =1 if id==260
+replace GW2Team =1 if id==286
+replace GW2Team =1 if id==276
 
-gen GWList=0
-glo xconditions GWList!= 1
 
-*Goalies (2)
-sum GW2Scores if element_type ==1
-replace GWList = 1 if GW2Scores==r(max)&$xconditions
-sum GW2Scores if element_type ==1&$xconditions
-replace GWList = 1 if GW2Scores==r(max)&$xconditions
-
-*Defenders (5)
-forvalues i = 1/5 {
-	sum GW2Scores if element_type ==2&$xconditions
-	replace GWList = 1 if GW2Scores==r(max)&$xconditions
-	}
-*Midfielders (5)
-forvalues i = 1/5 {
-	sum GW2Scores if element_type ==3&$xconditions
-	replace GWList = 1 if GW2Scores==r(max)&$xconditions
-	}
-
-*Strikers (3)
-forvalues i = 1/3 {
-	sum GW2Scores if element_type ==4&$xconditions
-	replace GWList = 1 if GW2Scores==r(max)&$xconditions
-	}
-tab PlayerName if GWList==1
-tabstat now_cost if GWList==1,by(PlayerName) s(mean N)
+tab PlayerName if GW2Team == 1
+tabstat total_points GWScores ict_index value_form if GW2Team == 1&gameweek==2,by(web_name) s(mean)
+tabstat total_points GWScores ict_index value_form if PredictOLS == 1&gameweek==2,by(web_name) s(mean)
+tabstat total_points GWScores ict_index value_form if in_dreamteam == 1&gameweek==2,by(web_name) s(mean)
+tabstat total_points GWScores ict_index value_form if fantasyteam == 1&gameweek==2,by(web_name) s(mean)

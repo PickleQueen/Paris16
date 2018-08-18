@@ -18,9 +18,9 @@ gen PlayerName = first_name + " " + second_name
 gen ReturnBack = regexm(news,"Suspended until")
 replace ReturnBack = regexm(news,"Expected back")
 
-drop if news!=""&ReturnBack!=1
-drop if id ==273 ///de Bruyne
-drop if id ==357 ///Trippier
+*drop if news!=""&ReturnBack!=1
+drop if id ==273 //de Bruyne
+*drop if id ==357 //Trippier
 
 gen GWScores1 = 0.0768 *selected_by_percent+5.162 *value_form-0.0709
 gen GWScores2 = 0.155 *selected_by_percent+6.982 *value_form + 0.769
@@ -68,33 +68,38 @@ tabstat GWScores,by(PlayerName) s(mean)
 tabstat AvgGWScores,by(PlayerName) s(mean)
 tabstat GWScores if gameweek==36,by(PlayerName) s(mean)
 
-gen PredictList = 0
-glo xconditions PredictList!= 1&!inlist(id,267,282,378)
+gen PredictOLS = 0
+glo xconditions PredictOLS!= 1&!inlist(id,267,282,378)
 
 *Goalies (2)
 sum AvgGWScores if element_type==1
-replace PredictList = 1 if AvgGWScores==r(max)&$xconditions
+replace PredictOLS = 1 if AvgGWScores==r(max)&$xconditions
 sum AvgGWScores if element_type==1&$xconditions
-replace PredictList = 1 if AvgGWScores==r(max)&$xconditions
+replace PredictOLS = 1 if AvgGWScores==r(max)&$xconditions
 
 *Defenders (5)
 forvalues i = 1/5 {
 	sum AvgGWScores if element_type==2&$xconditions
-	replace PredictList = 1 if AvgGWScores==r(max)&$xconditions
+	replace PredictOLS = 1 if AvgGWScores==r(max)&$xconditions
 	}
+		
 *Midfielders (5)
 forvalues i = 1/5 {
 	sum AvgGWScores if element_type==3&$xconditions
-	replace PredictList = 1 if AvgGWScores==r(max)&$xconditions
+	replace PredictOLS = 1 if AvgGWScores==r(max)&$xconditions
 	}
 
 *Strikers (3)
 forvalues i = 1/3 {
 	sum AvgGWScores if element_type==4&$xconditions
-	replace PredictList = 1 if AvgGWScores==r(max)&$xconditions
+	replace PredictOLS = 1 if AvgGWScores==r(max)&$xconditions
 	}
 
-tab PlayerName if PredictList == 1
+
+tab PlayerName if PredictOLS==1	
+tabstat GWScores if PredictOLS==1	,by(PlayerName) s(mean)
+	
+	
 tabstat id if PredictList==1,by(web_name) s(mean)
 tabstat now_cost if PredictList == 1, by(PlayerName) s(mean)
 tabstat GWScores if gameweek == 2, by(PlayerName) s(mean)
