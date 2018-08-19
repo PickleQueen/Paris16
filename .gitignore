@@ -4,7 +4,7 @@
 # Stata dataset and output files
 *.dta
 *.gph
-*.log
+# *.log
 *.smcl
 *.stpr
 *.stsem
