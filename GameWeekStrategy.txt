@@ -1,0 +1,4 @@
+1. Compute team statistics: ict index, cost, value for money, home or away game, opponent
+2. Add online odds
+3. Check team consistency using Historical data
+4. Check latest Player scores and update predicted scores.

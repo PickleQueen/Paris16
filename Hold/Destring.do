@@ -1,0 +1,11 @@
+destring value_form,replace
+destring value_season,replace
+destring ict_index,replace
+destring points_per_game,replace
+destring form,replace
+destring creativity,replace
+destring influence,replace
+destring threat,replace
+destring selected_by_percent,replace
+destring ep_next,replace
+destring ep_this,replace

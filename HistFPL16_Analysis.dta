@@ -1,0 +1,38 @@
+cd "$0X0WorkingDirectory"
+
+/*******************************************************************************
+
+Premier League Season 2016/2017
+
+********************************************************************************/
+
+use HistFPL16Fixtures,clear
+
+*Team performance over game weeks
+foreach var of varlist AsHome AsAway {
+	bysort `var' GameWeek: egen `var'TotPoints = sum(totalpoints)
+	bysort `var' GameWeek: egen `var'AvgtPoints = mean(totalpoints)
+	}
+
+//HOME
+
+twoway (scatter AsHomeAvgtPoints GameWeek if match_code==3,c(l) sort ) ///
+	(scatter AsAwayAvgtPoints GameWeek if match_code==3,c(l) sort ) 
+
+	
+	
+/*******************************************************************************
+
+Premier League Season 2017/2018
+
+********************************************************************************/	
+
+
+/*******************************************************************************
+
+Premier League Season 2016/2017/2018 (2 SEASONS)
+
+********************************************************************************/	
+
+use HistFPL16Fixtures,clear
+append using HistFPL17Fixtures
