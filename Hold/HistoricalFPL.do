@@ -1,4 +1,4 @@
-cd "$WorkingDirectory"
+
 use HistFPL1617,clear
 gen seasondummy = (Season==17)
 do PlayerNameCorrection.do
